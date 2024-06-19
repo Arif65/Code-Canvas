@@ -1,25 +1,67 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import Login from "./Login";
+import Signup from "./Signup";
+import Mainlist from "./Mainlist";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  const [view, setView] = useState("main"); // 'main', 'login', 'signup', 'guest'
+  const [isGuest, setIsGuest] = useState(false); // Track if user is guest
+  const [username, setUsername] = useState(""); // Store the username
+
+  const renderView = () => {
+    if (view === "main") {
+      return (
+        <div>
+          <h1>Code-Canvas</h1>
+          <button onClick={() => setView("login")}>Login</button>
+          <button onClick={() => setView("signup")}>Signup</button>
+          <button
+            onClick={() => {
+              setIsGuest(true);
+              setView("mainlist");
+            }}
+          >
+            Guest Login
+          </button>
+        </div>
+      );
+    }
+    if (view === "login") {
+      return (
+        <Login
+          onBackClick={() => setView("main")}
+          onLoginSuccess={(username) => {
+            setIsGuest(false);
+            setUsername(username);
+            setView("mainlist");
+          }}
+        />
+      );
+    }
+    if (view === "signup") {
+      return (
+        <Signup
+          onBackClick={() => setView("main")}
+          onSignupSuccess={(username) => {
+            setIsGuest(false);
+            setUsername(username);
+            setView("mainlist");
+          }}
+        />
+      );
+    }
+    if (view === "mainlist") {
+      return (
+        <Mainlist
+          isGuest={isGuest}
+          username={username}
+          onBackClick={() => setView("main")}
+        />
+      );
+    }
+  };
+
+  return <div className="App">{renderView()}</div>;
 }
 
 export default App;
