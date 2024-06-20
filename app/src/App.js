@@ -1,67 +1,71 @@
 import React, { useState } from "react";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  useNavigate,
+} from "react-router-dom";
 import Login from "./Login";
 import Signup from "./Signup";
 import Mainlist from "./Mainlist";
+import LinearSearch from "./LinearSearch";
+import UserProfile from "./UserProfile";
 
-function App() {
-  const [view, setView] = useState("main"); // 'main', 'login', 'signup', 'guest'
-  const [isGuest, setIsGuest] = useState(false); // Track if user is guest
-  const [username, setUsername] = useState(""); // Store the username
+const App = () => {
+  const [view, setView] = useState("login");
 
-  const renderView = () => {
-    if (view === "main") {
-      return (
-        <div>
-          <h1>Code-Canvas</h1>
-          <button onClick={() => setView("login")}>Login</button>
-          <button onClick={() => setView("signup")}>Signup</button>
-          <button
-            onClick={() => {
-              setIsGuest(true);
-              setView("mainlist");
-            }}
-          >
-            Guest Login
-          </button>
-        </div>
-      );
-    }
-    if (view === "login") {
-      return (
-        <Login
-          onBackClick={() => setView("main")}
-          onLoginSuccess={(username) => {
-            setIsGuest(false);
-            setUsername(username);
-            setView("mainlist");
-          }}
-        />
-      );
-    }
-    if (view === "signup") {
-      return (
-        <Signup
-          onBackClick={() => setView("main")}
-          onSignupSuccess={(username) => {
-            setIsGuest(false);
-            setUsername(username);
-            setView("mainlist");
-          }}
-        />
-      );
-    }
-    if (view === "mainlist") {
-      return (
-        <Mainlist
-          isGuest={isGuest}
-          username={username}
-          onBackClick={() => setView("main")}
-        />
-      );
-    }
+  const handleViewChange = (newView) => {
+    setView(newView);
   };
 
-  return <div className="App">{renderView()}</div>;
-}
+  return (
+    <div className="App">
+      <Routes>
+        <Route
+          path="/"
+          element={<LoginSignup view={view} onViewChange={handleViewChange} />}
+        />
+        <Route path="/mainlist" element={<Mainlist />} />
+        <Route path="/linear" element={<LinearSearch />} />
+
+        <Route path="/user-profile" element={<UserProfile />} />
+      </Routes>
+    </div>
+  );
+};
+
+const LoginSignup = ({ view, onViewChange }) => {
+  const navigate = useNavigate();
+
+  const handleGuestLogin = () => {
+    navigate("/mainlist", { state: { isGuest: true, username: "Guest" } });
+  };
+
+  const handleLoginSuccess = (username) => {
+    navigate("/mainlist", { state: { isGuest: false, username } });
+  };
+
+  const handleSignupSuccess = (username) => {
+    navigate("/mainlist", { state: { isGuest: false, username } });
+  };
+
+  return (
+    <div>
+      {view === "login" ? (
+        <Login onLoginSuccess={handleLoginSuccess} />
+      ) : (
+        <Signup onSignupSuccess={handleSignupSuccess} />
+      )}
+      <div>
+        <button
+          onClick={() => onViewChange(view === "login" ? "signup" : "login")}
+        >
+          {view === "login" ? "Switch to Signup" : "Switch to Login"}
+        </button>
+        <button onClick={handleGuestLogin}>Guest Login</button>
+      </div>
+    </div>
+  );
+};
 
 export default App;

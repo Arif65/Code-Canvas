@@ -1,14 +1,13 @@
-// src/Signup.js
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-function Signup({ onBackClick, onSignupSuccess }) {
-  const [username, setUsername] = useState('arif S');
+function Signup({ onSignupSuccess }) {
+  const [username, setUsername] = useState("arif S");
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Here you would handle the actual login logic (e.g., form validation, API calls)
-    // For now, we'll assume the login is successful
     onSignupSuccess(username);
   };
+
   return (
     <div>
       <h2>Signup</h2>
@@ -27,7 +26,6 @@ function Signup({ onBackClick, onSignupSuccess }) {
         </div>
         <button type="submit">Signup</button>
       </form>
-      <button onClick={onBackClick}>Back</button>
     </div>
   );
 }

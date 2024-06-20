@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-const SearchController = ({ arrayElements, onSearchComplete, onCurrentIndexChange }) => {
+const SearchController = ({ arrayElements, onColorUpdate, resetChartColors }) => {
   const [searchElement, setSearchElement] = useState('');
-  const [currentIndex, setCurrentIndex] = useState(-1);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [isSearching, setIsSearching] = useState(false);
-  const [searchSpeed, setSearchSpeed] = useState(500); // Initial speed
+  const [searchSpeedMultiplier, setSearchSpeedMultiplier] = useState(1); // Default is 1x (500ms)
   const searchTimeoutRef = useRef(null);
 
   const handleSearchElementChange = (e) => {
@@ -12,10 +12,9 @@ const SearchController = ({ arrayElements, onSearchComplete, onCurrentIndexChang
   };
 
   const startSearch = () => {
-    setCurrentIndex(-1);
-    setIsSearching(true);
     setCurrentIndex(0);
-    onCurrentIndexChange(0);
+    setIsSearching(true);
+    resetChartColors(); // Reset chart colors when search starts
   };
 
   const stopSearch = () => {
@@ -26,28 +25,40 @@ const SearchController = ({ arrayElements, onSearchComplete, onCurrentIndexChang
   };
 
   const handleSpeedChange = (e) => {
-    setSearchSpeed(Number(e.target.value));
+    setSearchSpeedMultiplier(Number(e.target.value));
   };
 
+  const searchSpeed = 500 / searchSpeedMultiplier; // Calculate the search speed in ms
+
   useEffect(() => {
-    if (isSearching && currentIndex < arrayElements.length) {
-      searchTimeoutRef.current = setTimeout(() => {
-        if (arrayElements[currentIndex] === parseInt(searchElement)) {
-          alert(`Element found at index ${currentIndex}`);
-          onSearchComplete(currentIndex);
-          stopSearch();
-        } else {
-          const nextIndex = currentIndex + 1;
-          setCurrentIndex(nextIndex);
-          onCurrentIndexChange(nextIndex);
-        }
-      }, searchSpeed);
-    } else if (currentIndex >= arrayElements.length) {
-      alert('Element not found');
-      onSearchComplete(-1);
-      stopSearch();
+    let timeoutId;
+  
+    if (isSearching) {
+      if (currentIndex < arrayElements.length) {
+        timeoutId = setTimeout(() => {
+          onColorUpdate(currentIndex, 'blue');
+          if (arrayElements[currentIndex] === parseInt(searchElement, 10)) {
+            setTimeout(() => {
+              onColorUpdate(currentIndex, 'green');
+            }, searchSpeed / 2);
+            alert(`Element found at index ${currentIndex + 1}`);
+            stopSearch();
+          } else {
+            setTimeout(() => {
+              onColorUpdate(currentIndex, 'red');
+            }, searchSpeed / 2); 
+            setCurrentIndex(currentIndex + 1);
+          }
+        }, searchSpeed);
+      } else {
+        // Search completed, element not found
+        alert('Element not found');
+        stopSearch();
+      }
     }
-  }, [isSearching, currentIndex, searchSpeed]); // Include searchSpeed in dependencies
+  
+    return () => clearTimeout(timeoutId); 
+  }, [isSearching, currentIndex, searchSpeed, arrayElements, searchElement, onColorUpdate]);
 
   return (
     <div>
@@ -60,16 +71,16 @@ const SearchController = ({ arrayElements, onSearchComplete, onCurrentIndexChang
       <button onClick={startSearch} disabled={isSearching}>Start Search</button>
       <button onClick={stopSearch} disabled={!isSearching}>Stop Search</button>
       <div>
-        <label>Search Speed (ms): </label>
+        <label>Search Speed: </label>
         <input
           type="range"
-          value={searchSpeed}
-          min="100"
-          max="1000"
-          step="100"
+          value={searchSpeedMultiplier}
+          min="0.1"
+          max="2"
+          step="0.1"
           onChange={handleSpeedChange}
         />
-        <span>{searchSpeed} ms</span>
+        <span>{searchSpeedMultiplier.toFixed(1)}x</span>
       </div>
     </div>
   );

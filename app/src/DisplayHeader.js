@@ -1,13 +1,22 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const DisplayHeader = ({ username, onBackClick }) => {
+const DisplayHeader = ({ text, username, onBackClick }) => {
+  const navigate = useNavigate();
+
+  const handleUserProfileClick = () => {
+    navigate('/user-profile', { state: { username } }); // Navigate to user profile page with username state
+  };
+
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-      <div>Code Canvas</div>
-      <div>Linear Search</div>
-      <div style={{ color: 'blue', cursor: 'pointer' }}>
+      <div>{text}</div> {/* Display the text prop */}
+      <button
+        style={{ color: 'blue', cursor: 'pointer', textDecoration: 'underline', border: 'none', background: 'none' }}
+        onClick={handleUserProfileClick}
+      >
         {username}
-      </div>
+      </button>
       <button onClick={onBackClick}>Back to Main</button>
     </div>
   );
