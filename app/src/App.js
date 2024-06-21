@@ -1,10 +1,5 @@
 import React, { useState } from "react";
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  useNavigate,
-} from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, useNavigate } from "react-router-dom";
 import Login from "./Login";
 import Signup from "./Signup";
 import Mainlist from "./Mainlist";
@@ -21,14 +16,10 @@ const App = () => {
   return (
     <div className="App">
       <Routes>
-        <Route
-          path="/"
-          element={<LoginSignup view={view} onViewChange={handleViewChange} />}
-        />
+        <Route path="/" element={<LoginSignup view={view} onViewChange={handleViewChange} />} />
         <Route path="/mainlist" element={<Mainlist />} />
         <Route path="/linear" element={<LinearSearch />} />
-
-        <Route path="/user-profile" element={<UserProfile />} />
+        <Route path="/user-profile/:username" element={<UserProfile />} /> {/* Update route to include username */}
       </Routes>
     </div>
   );
@@ -57,9 +48,7 @@ const LoginSignup = ({ view, onViewChange }) => {
         <Signup onSignupSuccess={handleSignupSuccess} />
       )}
       <div>
-        <button
-          onClick={() => onViewChange(view === "login" ? "signup" : "login")}
-        >
+        <button onClick={() => onViewChange(view === "login" ? "signup" : "login")}>
           {view === "login" ? "Switch to Signup" : "Switch to Login"}
         </button>
         <button onClick={handleGuestLogin}>Guest Login</button>

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 function Signup({ onSignupSuccess }) {
-  const [username, setUsername] = useState("arif S");
+  const [username, setUsername] = useState("arif_S");
 
   const handleSubmit = (event) => {
     event.preventDefault();

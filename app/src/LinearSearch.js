@@ -9,11 +9,11 @@ import { useLocation, useNavigate } from 'react-router-dom';
 const LinearSearch = ({ onBackClick }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { username } = location.state || { username: '' };
+  const { username, topicName, item } = location.state || { username: '', topicName: '' , item: ''};
 
   const [isRandomInputChecked, setIsRandomInputChecked] = useState(true);
   const [isUserInputChecked, setIsUserInputChecked] = useState(false);
-  const [numElements, setNumElements] = useState(0);
+  const [numElements, setNumElements] = useState(2);
   const [arrayElements, setArrayElements] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [chartColors, setChartColors] = useState([]);
@@ -21,6 +21,9 @@ const LinearSearch = ({ onBackClick }) => {
   useEffect(() => {
     if (isRandomInputChecked && numElements > 0) {
       generateRandomArray();
+    } else {
+      setArrayElements([]);
+      resetChartColors();
     }
   }, [isRandomInputChecked, numElements]);
 
@@ -51,6 +54,8 @@ const LinearSearch = ({ onBackClick }) => {
     const value = e.target.value;
     if (value === '' || (/^\d+$/.test(value) && Number(value) >= 1 && Number(value) <= 50)) {
       setNumElements(value === '' ? '' : Number(value));
+    } else {
+      setNumElements(numElements); // Prevent invalid inputs
     }
   };
 
@@ -84,8 +89,8 @@ const LinearSearch = ({ onBackClick }) => {
 
   return (
     <div>
-      <DisplayHeader text="Linear Search" username={username} onBackClick={() => navigate('/')} />
-      
+      <DisplayHeader topicName={item + ' ' + topicName} username={username} onBackClick={() => navigate('/')} />
+
       <UserInput
         numElements={numElements}
         isRandomInputChecked={isRandomInputChecked}
@@ -100,16 +105,18 @@ const LinearSearch = ({ onBackClick }) => {
       />
 
       <ArrayDisplay arrayElements={arrayElements} />
-      
-      <ChartComponent 
-        arrayElements={arrayElements} 
+
+      <ChartComponent
+        arrayElements={arrayElements}
         chartColors={chartColors}
       />
 
-      <SearchController 
-        arrayElements={arrayElements} 
-        onColorUpdate={handleColorUpdate} 
-        resetChartColors={resetChartColors} // Pass the reset function as a prop
+      <SearchController
+        username={username}
+        topicName={item + ' ' + topicName}
+        arrayElements={arrayElements}
+        onColorUpdate={handleColorUpdate}
+        resetChartColors={resetChartColors}
       />
     </div>
   );

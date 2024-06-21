@@ -35,7 +35,10 @@ const ChartComponent = ({ arrayElements, chartColors }) => {
           },
           tooltip: {
             callbacks: {
-              label: (tooltipItem) => tooltipItem.raw.toFixed(1),
+              label: (tooltipItem) => {
+                // Convert tooltip label to integer
+                return Math.round(tooltipItem.raw).toString(); // Adjust rounding method as needed
+              }
             }
           }
         },
@@ -54,7 +57,7 @@ const ChartComponent = ({ arrayElements, chartColors }) => {
           x: {
             title: {
               display: true,
-              text: 'Element Index',
+              text: 'Index',
             },
           }
         },

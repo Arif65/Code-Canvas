@@ -31,19 +31,21 @@ const Modal = ({ isOpen, onClose, onSubmit, numElements }) => {
   return (
     <div className="modal-overlay">
       <div className="modal">
-        <button onClick={onClose}>Close</button>
+        <button className="close-btn" onClick={onClose}>Close</button>
         <h2>Enter Numbers</h2>
-        {Array.from({ length: numElements }).map((_, index) => (
-          <div key={index}>
-            <label>Element {index + 1}:</label>
-            <input
-              type="number"
-              value={inputValues[index]}
-              onChange={(e) => handleInputChange(index, e.target.value)}
-            />
-          </div>
-        ))}
-        <button onClick={handleSubmit}>Submit</button>
+        <div className="modal-content">
+          {Array.from({ length: numElements }).map((_, index) => (
+            <div key={index} className="input-container">
+              <label>Element {index + 1}:</label>
+              <input
+                type="number"
+                value={inputValues[index]}
+                onChange={(e) => handleInputChange(index, e.target.value)}
+              />
+            </div>
+          ))}
+        </div>
+        <button className="submit-btn" onClick={handleSubmit}>Submit</button>
       </div>
     </div>
   );

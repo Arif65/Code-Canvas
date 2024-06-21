@@ -1,4 +1,3 @@
-// Mainlist.js
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import DisplayHeader from './DisplayHeader';
@@ -6,7 +5,7 @@ import DisplayHeader from './DisplayHeader';
 const Mainlist = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isGuest, username } = location.state || { isGuest: false, username: '' };
+  const { username } = location.state || { username: '' };
 
   const [selectedTopic, setSelectedTopic] = useState(null);
 
@@ -17,20 +16,16 @@ const Mainlist = () => {
   ];
 
   const handleTopicSelect = (topicName) => {
-    setSelectedTopic(topicName === selectedTopic ? null : topicName);
+    setSelectedTopic(selectedTopic === topicName ? null : topicName);
   };
 
-  const handleItemSelect = (item) => {
-    // Pass username as part of state to /linear route
-    navigate(`/${item.toLowerCase().replace(' ', '-')}`, { state: { username } });
+  const handleItemSelect = (topicName, item) => {
+    navigate(`/${item.toLowerCase().replace(' ', '-')}`, { state: { username, topicName, item } });
   };
 
   const renderMainlist = () => (
     <div>
-      {/* <h1>Algorithms and Techniques</h1>
-      <p>{isGuest ? 'Guest' : `Logged in as: ${username}`}</p>
-      <button onClick={() => navigate('/')}>Back to Main</button> */}
-      <DisplayHeader text="Algorithms and Techniques" username={username} onBackClick={() => navigate('/')} /> {/* Pass text and username to DisplayHeader */}
+      <DisplayHeader topicName="Algorithms and Techniques" username={username} onBackClick={() => navigate('/')} />
 
       <div className="topics">
         {topics.map((topic, index) => (
@@ -41,7 +36,7 @@ const Mainlist = () => {
             {selectedTopic === topic.name && (
               <ul className="items">
                 {topic.items.map((item, idx) => (
-                  <button key={idx} onClick={() => handleItemSelect(item)}>{item}</button>
+                  <button key={idx} onClick={() => handleItemSelect(topic.name, item)}>{item}</button>
                 ))}
               </ul>
             )}
