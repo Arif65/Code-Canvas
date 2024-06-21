@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const DisplayHeader = ({ topicName, username, onBackClick }) => {
+const DisplayHeader = ({ username, topicName, item }) => {
   const navigate = useNavigate();
 
   const handleUserProfileClick = () => {
@@ -17,13 +17,13 @@ const DisplayHeader = ({ topicName, username, onBackClick }) => {
   };
 
   const handleMainlistClick = () => {
-    navigate('/mainlist'); // Navigate to the algo list page
+    navigate('/mainlist', { state: { username } }); // Navigate to the algo list page with username in state
   };
 
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
       <div>Code Canvas</div>
-      <div>{topicName}</div> {/* Display topicName */}
+      <div>{item}</div> {/* Display topicName */}
       
       {username !== 'Guest' && (
         <div>
@@ -55,10 +55,9 @@ const DisplayHeader = ({ topicName, username, onBackClick }) => {
           </button>
         </div>
       )}
-
-      {/* <button onClick={onBackClick}>Back to Main</button> */}
       
-      {topicName != 'Algorithms and Techniques' && (<button onClick={handleMainlistClick}>
+      {item !== 'Algorithms and Techniques' && (
+        <button onClick={handleMainlistClick}>
           Back to Mainlist
         </button>
       )}

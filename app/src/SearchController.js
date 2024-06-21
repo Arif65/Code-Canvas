@@ -73,7 +73,7 @@ const SearchController = ({ username, topicName, arrayElements, onColorUpdate, r
 
   const searchSpeed = 500 / searchSpeedMultiplier; // Calculate the search speed in ms
 
-  const performSearchStep = () => {
+  const performSearchStep = () => { // Linear
     if (document.visibilityState === 'hidden') {
       return; // Skip execution when the tab is not visible
     }

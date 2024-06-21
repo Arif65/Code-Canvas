@@ -6,7 +6,7 @@ import ChartComponent from './ChartComponent';
 import SearchController from './SearchController';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-const LinearSearch = ({ onBackClick }) => {
+const LinearSearch = ({ }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { username, topicName, item } = location.state || { username: '', topicName: '' , item: ''};
@@ -89,7 +89,7 @@ const LinearSearch = ({ onBackClick }) => {
 
   return (
     <div>
-      <DisplayHeader topicName={item + ' ' + topicName} username={username} onBackClick={() => navigate('/')} />
+      <DisplayHeader topicName={topicName} item={item} username={username}  />
 
       <UserInput
         numElements={numElements}

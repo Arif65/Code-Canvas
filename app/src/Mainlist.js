@@ -10,8 +10,8 @@ const Mainlist = () => {
   const [selectedTopic, setSelectedTopic] = useState(null);
 
   const topics = [
-    { name: 'Search', items: ['Linear', 'Binary', 'Ternary'] },
-    { name: 'Sort', items: ['Bubble', 'Selection', 'Insertion', 'Merge'] },
+    { name: 'Search', items: ['Linear Search', 'Binary Search', 'Ternary Search'] },
+    { name: 'Sort', items: ['Bubble Sort', 'Selection Sort', 'Insertion Sort', 'Merge Sort'] },
     { name: 'Graph', items: ['DFS', 'BFS', 'Multisource BFS'] }
   ];
 
@@ -25,7 +25,7 @@ const Mainlist = () => {
 
   const renderMainlist = () => (
     <div>
-      <DisplayHeader topicName="Algorithms and Techniques" username={username} onBackClick={() => navigate('/')} />
+      <DisplayHeader item="Algorithms and Techniques" username={username} />
 
       <div className="topics">
         {topics.map((topic, index) => (
