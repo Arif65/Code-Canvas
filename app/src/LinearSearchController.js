@@ -1,12 +1,25 @@
 import React, { useState, useEffect, useRef } from 'react';
+import SpeedControl from './SpeedControl'; // Import the SpeedControl component
+import ControlButtons from './ControlButtons';
 
-const SearchController = ({ username, topicName, arrayElements, onColorUpdate, resetChartColors }) => {
+const LinearSearchController = ({
+  username,
+  topicName,
+  item,
+  arrayElements,
+  setArrayElements,
+  onColorUpdate,
+  onValueUpdate, // Added the new prop
+  resetChartColors,
+}) => {
+
   const [searchElement, setSearchElement] = useState('');
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isSearching, setIsSearching] = useState(false);
-  const [isPaused, setIsPaused] = useState(false); // To handle pause/resume state
+  const [isPaused, setIsPaused] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
-  const [searchSpeedMultiplier, setSearchSpeedMultiplier] = useState(1); // Default is 1x (500ms)
+  const [searchSpeedMultiplier, setSearchSpeedMultiplier] = useState(1);
   const searchTimeoutRef = useRef(null);
   const visibilityStateRef = useRef(document.visibilityState);
 
@@ -19,7 +32,7 @@ const SearchController = ({ username, topicName, arrayElements, onColorUpdate, r
     setCurrentIndex(0);
     setIsSearching(true);
     setIsPaused(false);
-    resetChartColors(); // Reset chart colors when search starts
+    resetChartColors();
   };
 
   const pauseSearch = () => {
@@ -55,25 +68,13 @@ const SearchController = ({ username, topicName, arrayElements, onColorUpdate, r
     }
   };
 
-  const saveIt = () => {
-    const currentTime = new Date().toLocaleString();
-    const alertMessage = `
-      Username: ${username}
-      Topic Name: ${topicName}
-      Array Elements: ${JSON.stringify(arrayElements)}
-      Verdict: ${verdict}
-      Current Time: ${currentTime}
-    `;
-    alert(alertMessage);
-  };
-
   const handleSpeedChange = (e) => {
     setSearchSpeedMultiplier(Number(e.target.value));
   };
 
-  const searchSpeed = 500 / searchSpeedMultiplier; // Calculate the search speed in ms
+  const searchSpeed = 500 / searchSpeedMultiplier;
 
-  const performSearchStep = () => { // Linear
+  const performSearchStep = () => {
     if (document.visibilityState === 'hidden') {
       return; // Skip execution when the tab is not visible
     }
@@ -81,6 +82,12 @@ const SearchController = ({ username, topicName, arrayElements, onColorUpdate, r
     if (currentIndex < arrayElements.length) {
       searchTimeoutRef.current = setTimeout(() => {
         onColorUpdate(currentIndex, 'blue');
+        
+        // ///
+        // if(currentIndex % 5 == 0)
+        //   onValueUpdate(currentIndex, arrayElements[currentIndex] * 10); // Update the value
+        // ///
+
         if (arrayElements[currentIndex] === parseInt(searchElement, 10)) {
           setTimeout(() => {
             onColorUpdate(currentIndex, 'green');
@@ -112,9 +119,8 @@ const SearchController = ({ username, topicName, arrayElements, onColorUpdate, r
 
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible' && visibilityStateRef.current === 'hidden') {
-        // Tab has become visible
         if (isSearching && !isPaused) {
-          performSearchStep(); // Continue the search when the tab becomes visible
+          performSearchStep();
         }
       }
       visibilityStateRef.current = document.visibilityState;
@@ -155,48 +161,32 @@ const SearchController = ({ username, topicName, arrayElements, onColorUpdate, r
         onChange={handleSearchElementChange}
         placeholder="Element to search"
       />
-      {!isSearching && !isPaused && searchElement !== '' && (
-        <button onClick={startSearch} disabled={isSearching}>
-          Start Search
-        </button>
-      )}
-      {isSearching && (
-        <>
-          <button onClick={pauseSearch}>Pause</button>
-          <button onClick={startSearch}>Restart</button>
-          <button onClick={stopSearch}>Stop</button>
-        </>
-      )}
-      {isPaused && (
-        <>
-          <button onClick={continueSearch}>Continue</button>
-          <button onClick={startSearch}>Restart</button>
-          <button onClick={stopSearch}>Stop</button>
-        </>
-      )}
-      {isCompleted && (
-        <>
-          <button onClick={stopSearch}>Reset</button>
-          {username !== 'Guest' && <button onClick={saveIt}>Save</button>}
-        </>
-      )}
 
-      <div>
-        <label>Search Speed: </label>
-        <input
-          type="range"
-          value={searchSpeedMultiplier}
-          min="0.1"
-          max="2"
-          step="0.1"
-          onChange={handleSpeedChange}
-        />
-        <span>{searchSpeedMultiplier.toFixed(1)}x</span>
-      </div>
+      <ControlButtons
+        onStart={startSearch}
+        onStop={stopSearch}
+        onPause={pauseSearch}
+        onContinue={continueSearch}
+        onRestart={startSearch}
+        onReset={stopSearch}
+        isSearching={isSearching}
+        isPaused={isPaused}
+        isCompleted={isCompleted}
+        searchElement={searchElement}
+        username={username}
+        topicName={topicName}
+        item={item}
+        arrayElements={arrayElements}
+      />
+
+      <SpeedControl
+        searchSpeedMultiplier={searchSpeedMultiplier}
+        handleSpeedChange={handleSpeedChange}
+      />
 
       {verdict && <div>{verdict}</div>}
     </div>
   );
 };
 
-export default SearchController;
+export default LinearSearchController;
